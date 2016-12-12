@@ -13,9 +13,13 @@ var logger = new (winston.Logger)({
     ]
 });
 
+//
+// scheduleSingle - for the given account, get the TA stats
+// then set up a cron job to refresh the TA stats
+//
 Scheduler.scheduleSingle = function(account) {
   statFetcher.fetchStatsFor(account);
-  new CronJob({
+  return new CronJob({
     cronTime: config.Scheduler.CronPattern,
     onTick: function() {
       statFetcher.fetchStatsFor(account);
@@ -24,17 +28,21 @@ Scheduler.scheduleSingle = function(account) {
   });
 };
 
-Scheduler.loadFromDatabase = function() {
+Scheduler.loadFromDatabase = function(callback) {
   mAccounts.scan({},function(err,accounts) {
     if (!err) {
       logger.info("Lib/Scheduler | Accounts list retrieved successfully");
+      let cronjob_list = {};
       accounts.forEach(function(account) {
         logger.info("Lib/Scheduler | Scheduling check for Account " + account.accountName + "(" + account.accountNumber + ")");
-        Scheduler.scheduleSingle(account);
+        cronjob_list[account.accountNumber] = Scheduler.scheduleSingle(account);
       });
+      callback(null, cronjob_list);
     }
     else {
-      logger.error("Lib/Scheduler | Accounts scan operation failed");
+      let error_msg = "Lib/Scheduler | Accounts scan operation failed";
+      logger.error(error_msg);
+      callback(new Error(error_msg));
     }
   });
 };
