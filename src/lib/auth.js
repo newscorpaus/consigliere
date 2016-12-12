@@ -1,3 +1,4 @@
+'use strict';
 var AWS = require('aws-sdk');
 var mAccounts = require('../models/accounts');
 var config = require('config');
@@ -5,8 +6,8 @@ var winston = require('winston');
 
 var logger = new (winston.Logger)({
   transports: [
-      new (winston.transports.Console)({'timestamp':true}),
-      new (winston.transports.File)({'timestamp':true,filename:'/var/log/consigliere/auth.log'})
+      new (winston.transports.Console)({ 'timestamp': true }),
+      new (winston.transports.File)({ 'timestamp': true, filename: '/var/log/consigliere/auth.log' })
     ]
 });
 
@@ -16,68 +17,87 @@ var Auth = {};
 This method is given an account object as input and is returned an authenticated AWS Support object
 or an error object if the authentication fails
 */
-Auth.getSupport = function(account,callback){
-  switch(account.type){
+Auth.getSupport = function(account,callback) {
+  let support;
+  switch (account.type) {
     case 'master':
-      switch(account.choice){
+      switch (account.choice) {
         case 'role':
-          var support = new AWS.Support({region:config.Defaults.AWS.Support.Region});
+          support = new AWS.Support({ region: config.Defaults.AWS.Support.Region });
           logger.info("Lib/Auth | Returning Support object for Master Account using current instance role");
           callback(null,support);
         break;
         case 'keys':
-          var support = new AWS.Support({accessKeyId:account.accessKey,secretAccessKey:account.accessSecret,region:config.Defaults.AWS.Support.Region});
+          support = new AWS.Support({
+            accessKeyId: account.accessKey,
+            secretAccessKey: account.accessSecret,
+            region: config.Defaults.AWS.Support.Region
+          });
           logger.info("Lib/Auth | Returning Support object for Master Account using configured Access Keys");
-          callback(null,support);
+          callback(null, support);
         break;
       }
-      break;
+    break;
     case 'slave':
-      switch(account.choice){
+      switch (account.choice) {
         case 'role':
-          mAccounts.scan('type').eq('master').exec(function(err,masterAccounts){
-            if(err){
-              logger.error("Lib/Auth | Unable to perform scan operation for Accounts to find master | "+err.toString());
+          mAccounts.scan('type').eq('master').exec(function(err,masterAccounts) {
+            if (err) {
+              logger.error("Lib/Auth | Unable to perform scan operation for Accounts to find master | " + err.toString());
               callback(err);
             }
             else {
-              if(masterAccounts.length > 0)
-              {
+              if (masterAccounts.length > 0) {
                 var masterAccount = masterAccounts[0];
-                switch(masterAccount.choice){
+                let sts;
+                let params;
+                switch (masterAccount.choice) {
                   case 'role':
-                    var sts = new AWS.STS();
-                    var params = {
+                    sts = new AWS.STS();
+                    params = {
                       RoleArn: account.roleArn,
                       RoleSessionName: 'consigliere'
-                    }
-                    sts.assumeRole(params,function(err,data){
-                      if(err){
-                        logger.error("Lib/Auth | Unable to assume role | "+err.toString());
+                    };
+                    sts.assumeRole(params, function(err, data) {
+                      if (err) {
+                        logger.error("Lib/Auth | Unable to assume role | " + err.toString());
                         callback(err);
                       }
                       else {
-                        var support = new AWS.Support({accessKeyId:data.Credentials.AccessKeyId,secretAccessKey:data.Credentials.SecretAccessKey,sessionToken:data.Credentials.SessionToken,region:config.Defaults.AWS.Support.Region});
+                        support = new AWS.Support({
+                          accessKeyId: data.Credentials.AccessKeyId,
+                          secretAccessKey: data.Credentials.SecretAccessKey,
+                          sessionToken: data.Credentials.SessionToken,
+                          region: config.Defaults.AWS.Support.Region
+                        });
                         logger.info("Lib/Auth | Returning Support object for Master:Role and Slave:Role");
-                        callback(null,support);
+                        callback(null, support);
                       }
                     });
                   break;
                   case 'keys':
-                    var sts = new AWS.STS({accessKeyId:masterAccount.accessKey,secretAccessKey:masterAccount.accessSecret});
-                    var params = {
+                    sts = new AWS.STS({
+                      accessKeyId: masterAccount.accessKey,
+                      secretAccessKey: masterAccount.accessSecret
+                    });
+                    params = {
                       RoleArn: account.roleArn,
                       RoleSessionName: 'consigliere'
-                    }
-                    sts.assumeRole(params,function(err,data){
-                      if(err){
-                        logger.error("Lib/Auth | Unable to assume role | "+err.toString());
+                    };
+                    sts.assumeRole(params, function(err, data) {
+                      if (err) {
+                        logger.error("Lib/Auth | Unable to assume role | " + err.toString());
                         callback(err);
                       }
                       else {
-                        var support = new AWS.Support({accessKeyId:data.Credentials.AccessKeyId,secretAccessKey:data.Credentials.SecretAccessKey,sessionToken:data.Credentials.SessionToken,region:config.Defaults.AWS.Support.Region});
+                        support = new AWS.Support({
+                          accessKeyId: data.Credentials.AccessKeyId,
+                          secretAccessKey: data.Credentials.SecretAccessKey,
+                          sessionToken: data.Credentials.SessionToken,
+                          region: config.Defaults.AWS.Support.Region
+                        });
                         logger.info("Lib/Auth | Returning Support object for Master:Keys and Slave:Role");
-                        callback(null,support);
+                        callback(null, support);
                       }
                     });
                   break;
@@ -90,13 +110,17 @@ Auth.getSupport = function(account,callback){
           });
         break;
         case 'keys':
-          var support = new AWS.Support({accessKeyId:account.accessKey,secretAccessKey:account.accessSecret,region:config.Defaults.AWS.Support.Region});
+          support = new AWS.Support({
+            accessKeyId: account.accessKey,
+            secretAccessKey: account.accessSecret,
+            region: config.Defaults.AWS.Support.Region
+          });
           logger.info("Lib/Auth | Returning Support object for Slave:Keys, master irrelevant");
-          callback(null,support);
+          callback(null, support);
         break;
       }
-      break;
+    break;
   }
-}
+};
 
 module.exports = Auth;

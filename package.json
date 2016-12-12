@@ -4,6 +4,9 @@
   "description": "Multi account AWS trusted advisor dashboard",
   "main": "index.js",
   "scripts": {
+    "lintjscs": "npm run lint && npm run jscs",
+    "lint": "jshint src/index.js src/lib src/models",
+    "jscs": "jscs src/index.js src/lib src/models",
     "test": "NODE_CONFIG_DIR='./src/config' gulp test",
     "start": "export NODE_CONFIG_DIR='./src/config' ; node_modules/forever/bin/forever start -a -l /var/log/consigliere/forever.log -o /var/log/consigliere/forever.out.log -e /var/log/consigliere/forever.err.log src/index.js",
     "refresh_cache": "NODE_CONFIG_DIR='./src/config' node src/tools/refresh_cache.js",
@@ -66,6 +69,8 @@
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.4.2",
     "install": "^0.3.0",
+    "jscs": "^3.0.7",
+    "jshint": "^2.9.4",
     "less-mkdirp": "^1.0.1",
     "mkdirp": "^0.5.1",
     "mocha": "^2.3.3",

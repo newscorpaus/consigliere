@@ -1,5 +1,6 @@
+'use strict';
+
 var StatFetcher = {};
-var aws = require('aws-sdk');
 var auth = require('./auth');
 var config = require('config');
 var redis = require("redis");
@@ -10,58 +11,58 @@ var winston = require('winston');
 
 var logger = new (winston.Logger)({
   transports: [
-      new (winston.transports.Console)({'timestamp':true}),
-      new (winston.transports.File)({'timestamp':true,filename:'/var/log/consigliere/statfetcher.log'})
-    ]
+  new (winston.transports.Console)({ 'timestamp': true }),
+    new (winston.transports.File)({ 'timestamp': true, filename: '/var/log/consigliere/statfetcher.log' })
+  ]
 });
 
 
-client = redis.createClient(process.env.REDIS_URL || 'redis://127.0.0.1/6379');
+let client = redis.createClient(process.env.REDIS_URL || 'redis://127.0.0.1/6379');
 
-client.on("error", function (err) {
-    logger.error("DataStore/Redis | Error on redis connection | "+err.toString());
+client.on("error", function(err) {
+  logger.error("DataStore/Redis | Error on redis connection | " + err.toString());
 });
 
-StatFetcher.fetchStatsFor = function(account){
-  logger.info("Lib/StatFetcher | Starting to fetch TA stats for "+account.accountName+"("+account.accountNumber+")");
-  auth.getSupport(account,function(err,support){
-    if(!err){
-      logger.info("Successfully got support object for "+account.accountName+"("+account.accountNumber+")");
+StatFetcher.fetchStatsFor = function(account) {
+  logger.info("Lib/StatFetcher | Starting to fetch TA stats for " + account.accountName + "(" + account.accountNumber + ")");
+  auth.getSupport(account, function(err, support) {
+    if (!err) {
+      logger.info("Successfully got support object for " + account.accountName + "(" + account.accountNumber + ")");
       var params = {
         language: config.Defaults.AWS.Support.Language
       };
       support.describeTrustedAdvisorChecks(params, function(err, data) {
         if (err) {
-          logger.error("Failed to get checks for "+account.accountName+"("+account.accountNumber+")")
-          var currentDate = new Date();
+          logger.error("Failed to get checks for " + account.accountName + "(" + account.accountNumber + ")");
+          let currentDate = new Date();
           account.lastRefreshed = currentDate;
           account.lastRefreshStatus = "failed";
           account.save();
         }
         else {
           //update last refreshed
-          logger.info("Successfully got checks for "+account.accountName+"("+account.accountNumber+")");
-          var currentDate = new Date();
+          logger.info("Successfully got checks for " + account.accountName + "(" + account.accountNumber + ")");
+          let currentDate = new Date();
           account.lastRefreshed = currentDate;
           account.lastRefreshStatus = "success";
-          account.save(function(err){
-            if(!err){
-              logger.info("Successfully saved lastRefreshed stats for "+account.accountName+"("+account.accountNumber+")");
-              client.set(account.accountNumber+'_checks', JSON.stringify(data));
+          account.save(function(err) {
+            if (!err) {
+              logger.info("Successfully saved lastRefreshed stats for " + account.accountName + "(" + account.accountNumber + ")");
+              client.set(account.accountNumber + '_checks', JSON.stringify(data));
               var checkIds = [];
-              data.checks.forEach(function(check){
+              data.checks.forEach(function(check) {
                 checkIds.push(check.id);
                 var params = {
-                  checkId:check.id,
-                  language:config.Defaults.AWS.Support.Language
+                  checkId: check.id,
+                  language: config.Defaults.AWS.Support.Language
                 };
                 support.describeTrustedAdvisorCheckResult(params, function(err, data) {
                   if (err) {
-                    logger.error("Failed to get check results ("+check.id+") for "+account.accountName+"("+account.accountNumber+")");
+                    logger.error("Failed to get check results (" + check.id + ") for " + account.accountName + "(" + account.accountNumber + ")");
                   }
                   else {
-                    logger.info("Successfully retrieved check results ("+check.id+") for "+account.accountName+"("+account.accountNumber+")");
-                    client.set(account.accountNumber+'_result_'+check.id,JSON.stringify(data));
+                    logger.info("Successfully retrieved check results (" + check.id + ") for " + account.accountName + "(" + account.accountNumber + ")");
+                    client.set(account.accountNumber + '_result_' + check.id, JSON.stringify(data));
                   }
                 });
               });
@@ -69,72 +70,70 @@ StatFetcher.fetchStatsFor = function(account){
                 checkIds : checkIds
               };
               support.describeTrustedAdvisorCheckSummaries(params, function(err, data) {
-                if (err){
-                  logger.error("Failed to get check summaries for "+account.accountName+"("+account.accountNumber+")");
+                if (err) {
+                  logger.error("Failed to get check summaries for " + account.accountName + "(" + account.accountNumber + ")");
                 }
                 else {
-                  logger.info("Successfully retrieved check summaries for "+account.accountName+"("+account.accountNumber+")");
-                  client.set(account.accountNumber+'_summaries', JSON.stringify(data));
+                  logger.info("Successfully retrieved check summaries for " + account.accountName + "(" + account.accountNumber + ")");
+                  client.set(account.accountNumber + '_summaries', JSON.stringify(data));
                 }
               });
             }
             else {
-              logger.error("Failed to save lastRefreshed stats for "+account.accountName+"("+account.accountNumber+")")
+              logger.error("Failed to save lastRefreshed stats for " + account.accountName + "(" + account.accountNumber + ")");
             }
           });
-
         }
       });
     }
     else {
       //failed to get auth object
-      logger.error("Failed to get support object for "+account.accountName+"("+account.accountNumber+")");
+      logger.error("Failed to get support object for " + account.accountName + "(" + account.accountNumber + ")");
       var currentDate = new Date();
       account.lastRefreshed = currentDate;
       account.lastRefreshStatus = "failed";
       account.save();
     }
   });
-}
+};
 
-StatFetcher.getStatsForAccount = function(account,callback){
-  client.keys(account.accountNumber+'_*',function(err,replies){
-    if(!err){
+StatFetcher.getStatsForAccount = function(account, callback) {
+  client.keys(account.accountNumber + '_*', function(err, replies) {
+    if (!err) {
       console.log(replies);
     }
     else {
-      logger.error("Lib/StatFetcher | Failed to get keys from Redis for "+account.accountName+"("+account.accountNumber+")");
+      logger.error("Lib/StatFetcher | Failed to get keys from Redis for " + account.accountName + "(" + account.accountNumber + ")");
       callback(err);
     }
   });
-}
+};
 
-StatFetcher.getSummaryForCategoryForAll = function(category,callback){
-  mAccounts.scan({},function(err,accounts){
-    if(!err){
+StatFetcher.getSummaryForCategoryForAll = function(category,callback) {
+  mAccounts.scan({}, function(err, accounts) {
+    if (!err) {
       var calls = [];
       var checks = [];
       var summaries = [];
-      accounts.forEach(function(account){
-        calls.push(function(hollaback){
-          client.get(account.accountNumber+'_checks',function(err,checkList){
-            if(!err){
+      accounts.forEach(function(account) {
+        calls.push(function(hollaback) {
+          client.get(account.accountNumber + '_checks', function(err, checkList) {
+            if (!err) {
               var returnedChecks = JSON.parse(checkList);
-              returnedChecks.checks.forEach(function(check){
-                if(check.category == category){
-                  checks.push({accountName:account.accountName,accountNumber:account.accountNumber,check:check});
+              returnedChecks.checks.forEach(function(check) {
+                if (check.category == category) {
+                  checks.push({ accountName: account.accountName, accountNumber: account.accountNumber, check: check });
                 }
               });
-              client.get(account.accountNumber+'_summaries',function(err,summaryList){
-                if(!err){
+              client.get(account.accountNumber + '_summaries', function(err, summaryList) {
+                if (!err) {
                   var returnedSummaries = JSON.parse(summaryList);
-                  returnedSummaries.summaries.forEach(function(summary){
-                    summaries.push({accountName:account.accountName, accountNumber:account.accountNumber, summary:summary});
+                  returnedSummaries.summaries.forEach(function(summary) {
+                    summaries.push({ accountName: account.accountName, accountNumber: account.accountNumber, summary:summary });
                   });
                   hollaback();
                 }
                 else {
-
                   hollaback(err);
                 }
               });
@@ -145,16 +144,16 @@ StatFetcher.getSummaryForCategoryForAll = function(category,callback){
           });
         });
       });
-      async.parallel(calls,function(err,res){
-        if(!err){
+      async.parallel(calls, function(err) {
+        if (!err) {
           calls = [];
           var detailedChecks = [];
-          checks.forEach(function(check){
-            calls.push(function(hollaback){
-              client.get(check.accountNumber+'_result_'+check.check.id, function(err,res){
-                if(!err){
+          checks.forEach(function(check) {
+            calls.push(function(hollaback) {
+              client.get(check.accountNumber + '_result_' + check.check.id, function(err, res) {
+                if (!err) {
                   var returnedCheckDetail = JSON.parse(res);
-                  detailedChecks.push({accountNumber:check.accountNumber, accountName:check.accountName,result:returnedCheckDetail.result});
+                  detailedChecks.push({ accountNumber: check.accountNumber, accountName: check.accountName, result: returnedCheckDetail.result });
                   hollaback();
                 }
                 else {
@@ -163,45 +162,45 @@ StatFetcher.getSummaryForCategoryForAll = function(category,callback){
               });
             });
           });
-          async.parallel(calls,function(err,res){
-            if(!err){
+          async.parallel(calls, function(err) {
+            if (!err) {
               // console.log('%j',detailedChecks);
               // consolidate checks by name
               var consolidatedChecks = [];
-              checks.forEach(function(check){
-                found = false;
-                foundIndex = -1;
-                consolidatedChecks.forEach(function(consolidatedCheck,index){
-                  if(consolidatedCheck.name == check.check.name){
+              checks.forEach(function(check) {
+                let found = false;
+                let foundIndex = -1;
+                consolidatedChecks.forEach(function(consolidatedCheck, index) {
+                  if (consolidatedCheck.name == check.check.name) {
                     found = true;
                     foundIndex = index;
                   }
                 });
                 var foundSummary;
-                summaries.forEach(function(summary){
-                  if(summary.summary.checkId == check.check.id && summary.accountNumber == check.accountNumber){
+                summaries.forEach(function(summary) {
+                  if (summary.summary.checkId == check.check.id && summary.accountNumber == check.accountNumber) {
                     foundSummary = summary.summary;
                   }
                 });
                 var foundDetail;
-                detailedChecks.forEach(function(detailedCheck){
-                  if(detailedCheck.accountNumber == check.accountNumber && check.check.id == detailedCheck.result.checkId){
+                detailedChecks.forEach(function(detailedCheck) {
+                  if (detailedCheck.accountNumber == check.accountNumber && check.check.id == detailedCheck.result.checkId) {
                     foundDetail = detailedCheck.result;
                   }
-                })
-                var mergedCheckSummary = _.merge(foundSummary,check.check);
-                mergedCheckSummary = _.merge(mergedCheckSummary,foundDetail);
-                mergedCheckSummary = _.merge(mergedCheckSummary,{accountNumber:check.accountNumber,accountName:check.accountName});
-                if(found == true){
+                });
+                var mergedCheckSummary = _.merge(foundSummary, check.check);
+                mergedCheckSummary = _.merge(mergedCheckSummary, foundDetail);
+                mergedCheckSummary = _.merge(mergedCheckSummary, { accountNumber: check.accountNumber, accountName: check.accountName });
+                if (found === true) {
                   // name exists, add check to it.
                   consolidatedChecks[foundIndex].checks.push(mergedCheckSummary);
                 }
                 else {
                   // name doesn't exist yet, create it with a single element check array
-                  consolidatedChecks.push({description:check.check.description, name:check.check.name, checks:[mergedCheckSummary]});
+                  consolidatedChecks.push({ description: check.check.description, name: check.check.name, checks: [mergedCheckSummary] });
                 }
               });
-              callback(null,consolidatedChecks);
+              callback(null, consolidatedChecks);
             }
             else {
               callback(err);
@@ -218,11 +217,11 @@ StatFetcher.getSummaryForCategoryForAll = function(category,callback){
       callback(err);
     }
   });
-}
+};
 
-StatFetcher.getStatusCountsForAccount = function(account,callback){
-  client.get(account.accountNumber+'_summaries',function(err,data){
-    if(!err){
+StatFetcher.getStatusCountsForAccount = function(account, callback) {
+  client.get(account.accountNumber + '_summaries', function(err, data) {
+    if (!err) {
       var counts = {
         security : {
           not_available :0,
@@ -250,17 +249,17 @@ StatFetcher.getStatusCountsForAccount = function(account,callback){
         }
       };
       var summaries = JSON.parse(data);
-      client.get(account.accountNumber+'_checks',function(err,data){
-        if(!err){
+      client.get(account.accountNumber + '_checks', function(err, data) {
+        if (!err) {
           var checks = JSON.parse(data);
-          summaries.summaries.forEach(function(summary){
-            checks.checks.forEach(function(check){
-              if(summary.checkId == check.id){
+          summaries.summaries.forEach(function(summary) {
+            checks.checks.forEach(function(check) {
+              if (summary.checkId == check.id) {
                 counts[check.category][summary.status] = counts[check.category][summary.status] + 1;
               }
             });
           });
-          callback(null,counts);
+          callback(null, counts);
         }
         else {
           callback(err);
@@ -272,18 +271,18 @@ StatFetcher.getStatusCountsForAccount = function(account,callback){
       callback(err);
     }
   });
-}
+};
 
-StatFetcher.getStatusCountsForAll = function(callback){
-  mAccounts.scan({},function(err,accounts){
-    if(!err){
+StatFetcher.getStatusCountsForAll = function(callback) {
+  mAccounts.scan({}, function(err, accounts) {
+    if (!err) {
       var calls = [];
       var counts = [];
-      accounts.forEach(function(account){
-        calls.push(function(hollaback){
-          StatFetcher.getStatusCountsForAccount(account,function(err,res){
-            if(!err){
-              counts.push({account:account, counts:res});
+      accounts.forEach(function(account) {
+        calls.push(function(hollaback) {
+          StatFetcher.getStatusCountsForAccount(account, function(err, res) {
+            if (!err) {
+              counts.push({ account:account, counts:res });
               hollaback();
             }
             else {
@@ -292,9 +291,9 @@ StatFetcher.getStatusCountsForAll = function(callback){
           });
         });
       });
-      async.parallel(calls,function(err,res){
-        if(!err){
-          callback(null,counts);
+      async.parallel(calls, function(err) {
+        if (!err) {
+          callback(null, counts);
         }
         else {
           callback(err);
@@ -305,7 +304,7 @@ StatFetcher.getStatusCountsForAll = function(callback){
       callback(err);
     }
   });
-}
+};
 
 /*
  * fetchStatsForAll: for all the accounts in the DB, fetch all their stats
@@ -316,17 +315,17 @@ StatFetcher.getStatusCountsForAll = function(callback){
  * TODO: make fetchStatsFor() an async function
  */
 StatFetcher.fetchStatsForAll = function(callback) {
-    mAccounts.scan({}, function(err, accounts) {
-        if (!err) {
-            accounts.forEach(function(account) {
-                StatFetcher.fetchStatsFor(account);
-            });
-            callback(null);
-        }
-        else {
-            callback(err);
-        }
-    });
-}
- 
+  mAccounts.scan({}, function(err, accounts) {
+    if (!err) {
+      accounts.forEach(function(account) {
+        StatFetcher.fetchStatsFor(account);
+      });
+      callback(null);
+    }
+    else {
+      callback(err);
+    }
+  });
+};
+
 module.exports = StatFetcher;

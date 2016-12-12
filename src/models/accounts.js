@@ -1,8 +1,10 @@
+'use strict';
+
 var dynamoose = require('dynamoose');
 var config = require('config');
 var Schema = dynamoose.Schema;
 
-dynamoose.AWS.config.update({region: config.Defaults.AWS.Dynamo.Region});
+dynamoose.AWS.config.update({ region: config.Defaults.AWS.Dynamo.Region });
 
 var accountSchema = new Schema({
   accountName: {
@@ -13,11 +15,13 @@ var accountSchema = new Schema({
   type: {
     type: String,
     required: true,
-    validate : function(value){
-      if(value == 'master' || value == 'slave')
+    validate : function(value) {
+      if (value == 'master' || value == 'slave') {
         return true;
-      else
+      }
+      else {
         return false;
+      }
     }
   },
   choice: {
@@ -39,14 +43,14 @@ var accountSchema = new Schema({
   },
   created_at: {
     type: Date,
-    default : function(){
+    default : function() {
       var currentDate = new Date();
       return currentDate;
     }
   },
   updated_at: {
     type: Date,
-    default: function(){
+    default: function() {
       var currentDate = new Date();
       return currentDate;
     }

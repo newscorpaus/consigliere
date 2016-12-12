@@ -1,3 +1,4 @@
+'use strict';
 var Scheduler = {};
 var mAccounts = require('../models/accounts');
 var CronJob = require('cron').CronJob;
@@ -7,28 +8,28 @@ var winston = require('winston');
 
 var logger = new (winston.Logger)({
   transports: [
-      new (winston.transports.Console)({'timestamp':true}),
-      new (winston.transports.File)({'timestamp':true,filename:'/var/log/consigliere/scheduler.log'})
+      new (winston.transports.Console)({ 'timestamp': true }),
+      new (winston.transports.File)({ 'timestamp': true, filename: '/var/log/consigliere/scheduler.log' })
     ]
 });
 
-Scheduler.scheduleSingle = function(account){
+Scheduler.scheduleSingle = function(account) {
   statFetcher.fetchStatsFor(account);
-  var job = new CronJob({
+  new CronJob({
     cronTime: config.Scheduler.CronPattern,
-    onTick: function(){
+    onTick: function() {
       statFetcher.fetchStatsFor(account);
     },
     start: true
   });
-}
+};
 
-Scheduler.loadFromDatabase = function(){
-  mAccounts.scan({},function(err,accounts){
-    if(!err){
+Scheduler.loadFromDatabase = function() {
+  mAccounts.scan({},function(err,accounts) {
+    if (!err) {
       logger.info("Lib/Scheduler | Accounts list retrieved successfully");
-      accounts.forEach(function(account){
-        logger.info("Lib/Scheduler | Scheduling check for Account "+account.accountName+"("+account.accountNumber+")");
+      accounts.forEach(function(account) {
+        logger.info("Lib/Scheduler | Scheduling check for Account " + account.accountName + "(" + account.accountNumber + ")");
         Scheduler.scheduleSingle(account);
       });
     }
@@ -36,6 +37,6 @@ Scheduler.loadFromDatabase = function(){
       logger.error("Lib/Scheduler | Accounts scan operation failed");
     }
   });
-}
+};
 
 module.exports = Scheduler;
