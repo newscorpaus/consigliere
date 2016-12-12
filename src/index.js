@@ -201,7 +201,7 @@ server.register(require('vision'), function(err) {
     server.route({
       method: 'GET',
       path: '/api/accounts/statuscounts',
-      handler : function(request,reply) {
+      handler : function(request, reply) {
         statFetcher.getStatusCountsForAll(function(err,res) {
           if (!err) {
             logger.info("Lib/StatFetcher : GET /api/accounts/statuscounts | Retrieved counts stats");
@@ -217,21 +217,27 @@ server.register(require('vision'), function(err) {
     server.route({
       method: 'POST',
       path: '/api/authtest',
-      handler: function(request,reply) {
-        auth.getSupport(request.payload,function(err,support) {
-          var params = {
-            language: 'en'
-          };
-          support.describeTrustedAdvisorChecks(params, function(err) {
-            if (err) {
-              logger.error("Lib/Auth : POST /api/authtest | Failed to get trusted advisor checks | " + err.toString());
-              reply({ "result" : "failed" }).code(400);
-            }
-            else {
-              logger.info("Lib/Auth : POST /api/authtest | Successfully got trusted advisor checks");
-              reply({ "result" : "success" }).code(200);
-            }
-          });
+      handler: function(request, reply) {
+        auth.getSupport(request.payload,function(err, support) {
+          if (err) {
+            logger.error("auth.getSupport() failed for " + JSON.stringify(request.payload));
+            reply({ "result" : "failed" }).code(400);
+          }
+          else {
+            var params = {
+              language: 'en'
+            };
+            support.describeTrustedAdvisorChecks(params, function(err) {
+              if (err) {
+                logger.error("Lib/Auth : POST /api/authtest | Failed to get trusted advisor checks | " + err.toString());
+                reply({ "result" : "failed" }).code(400);
+              }
+              else {
+                logger.info("Lib/Auth : POST /api/authtest | Successfully got trusted advisor checks");
+                reply({ "result" : "success" }).code(200);
+              }
+            });
+          }
         });
       }
     });
