@@ -1,0 +1,50 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "IAM role for Consiglere",
+  "Resources": {
+    "consigliereIAMRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": [ {
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": "arn:aws:iam::{TRUSTED_ACCOUNT_ID}:root"
+            },
+            "Action": [ "sts:AssumeRole" ]
+          } ] 
+        },
+        "Path": "/Operations",
+        "Policies": [ 
+        {
+          "PolicyName" : "TrustedAdvisorAccess",
+          "PolicyDocument" : {
+            "Version": "2012-10-17",
+            "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "support:DescribeTrustedAdvisorChecks",
+                "support:DescribeTrustedAdvisorCheckResult",
+                "support:DescribeTrustedAdvisorCheckSummaries"
+              ],
+              "Resource": "*"
+            }
+            ]
+          }
+        }
+        ],
+          "RoleName": "Consigliere"
+      }
+    }
+  },
+  "Outputs": {
+    "ConsigliereIAMRoleARN": {
+      "Description": "Consigliere IAM role ARN",
+      "Value": {
+        "Fn::GetAtt" : [ "consigliereIAMRole", "Arn" ]
+      }
+    }
+  }
+}
