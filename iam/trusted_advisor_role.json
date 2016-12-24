@@ -15,7 +15,7 @@
             "Action": [ "sts:AssumeRole" ]
           } ] 
         },
-        "Path": "/Operations",
+        "Path": "/Operations/",
         "Policies": [ 
         {
           "PolicyName" : "TrustedAdvisorAccess",
@@ -25,9 +25,7 @@
             {
               "Effect": "Allow",
               "Action": [
-                "support:DescribeTrustedAdvisorChecks",
-                "support:DescribeTrustedAdvisorCheckResult",
-                "support:DescribeTrustedAdvisorCheckSummaries"
+                "support:*"
               ],
               "Resource": "*"
             }
