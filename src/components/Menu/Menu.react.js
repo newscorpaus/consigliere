@@ -20,6 +20,7 @@ module.exports = React.createClass({
                 <MenuItem category="performance" title="Performance" />
                 <MenuItem category="security" title="Security" />
                 <MenuItem category="fault_tolerance" title="Fault Tolerance" />
+                <MenuItem category="service_limits" title="Service Limits" />
               </ul>
               <ul className="nav navbar-nav navbar-right">
                 <li><Link to="/accounts">Accounts <span className="label label-danger label-as-badge"></span></Link></li>

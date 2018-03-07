@@ -388,18 +388,6 @@ module.exports = {
         ]
       },
       {
-        "Name" : "Service Limits",
-        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
-        "SuppressionText" : "%X items have been excluded",
-        "DefaultDisplayColumns" : [
-          0,
-          1,
-          2,
-          3,
-          4
-        ]
-      },
-      {
         "Name" : "Amazon EBS Provisioned IOPS (SSD) Volume Attachment Configuration",
         "DefaultText": "%X of %Y EBS Provisioned IOPS volumes are attached to an EC2 instance that is not EBS-optimized.",
         "SuppressionText" : "%X items have been excluded",
@@ -613,6 +601,474 @@ module.exports = {
           7,
           8,
           9
+        ]
+      },
+      {
+        "Name" : "Auto Scaling Groups",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "Auto Scaling Launch Configurations",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "CloudFormation Stacks",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "EBS Active Snapshots",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "EBS Active Volumes",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "EBS General Purpose SSD Volume Storage",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "EBS Magnetic (standard) Volume Storage",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "EBS Provisioned IOPS (SSD) Volume Aggregate IOPS",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "EBS Provisioned IOPS SSD (io1) Volume Storage",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "EC2 Elastic IP Addresses",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "EC2 On-Demand Instances",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "EC2 Reserved Instance Leases",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "ELB Active Load Balancers",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "IAM Group",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "IAM Instance Profiles",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "IAM Policies",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "IAM Roles",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "IAM Server Certificate",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "IAM Users",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "Kinesis Shards per Region",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Cluster Parameter Groups",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Cluster Roles",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Clusters",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS DB Instances",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS DB Parameter Groups",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS DB Security Groups",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS DB Snapshots Per User",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Event Subscriptions",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Max Auths per Security Group",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Option Groups",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Read Replicas per Master",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Reserved Instances",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Subnet Groups",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Subnets per Subnet Group",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "RDS Total Storage Quota",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "SES Daily Sending Quota",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "VPC Elastic IP Address",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "VPC Internet Gateways",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "Name" : "VPC Network Interfaces",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
         ]
       }
     ]

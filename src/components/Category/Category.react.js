@@ -38,6 +38,9 @@ module.exports = React.createClass({
       case 'security':
         title = "Security";
       break;
+      case 'service_limits':
+        title = "Service Limits";
+      break;
     }
     return (
       <div className='container'>

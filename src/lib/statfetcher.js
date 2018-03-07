@@ -52,6 +52,7 @@ StatFetcher.fetchStatsFor = function(account) {
               var checkIds = [];
               data.checks.forEach(function(check) {
                 checkIds.push(check.id);
+
                 var params = {
                   checkId: check.id,
                   language: config.Defaults.AWS.Support.Language
@@ -60,7 +61,7 @@ StatFetcher.fetchStatsFor = function(account) {
                   if (err) {
                     logger.error("Failed to get check results (" + check.id + ") for " + account.accountName + "(" + account.accountNumber + ")");
                   }
-                  else {
+                  else {                  
                     logger.info("Successfully retrieved check results (" + check.id + ") for " + account.accountName + "(" + account.accountNumber + ")");
                     client.set(account.accountNumber + '_result_' + check.id, JSON.stringify(data));
                   }
@@ -242,6 +243,12 @@ StatFetcher.getStatusCountsForAccount = function(account, callback) {
           ok:0
         },
         fault_tolerance : {
+          not_available :0,
+          error:0,
+          warning:0,
+          ok:0
+        },
+        service_limits : {
           not_available :0,
           error:0,
           warning:0,

@@ -92,6 +92,7 @@ a:hover .performance {
   width:100px;
   margin:0 auto;
 }
+
 a:hover .security {
   background-position: -200px 100px;
 }
@@ -106,6 +107,18 @@ a:hover .security {
 
 a:hover .fault_tolerance {
   background-position: -300px 100px;
+}
+
+.service_limits {
+  background-image: url('/images/categories.png');
+  background-position: -400px 0px;
+  height:100px;
+  width:100px;
+  margin:0 auto;
+}
+
+a:hover .service_limits {
+  background-position: -400px 100px;
 }
 
 .okStatus {
