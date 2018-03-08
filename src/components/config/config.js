@@ -388,6 +388,18 @@ module.exports = {
         ]
       },
       {
+        "Name" : "Service Limits",
+        "DefaultText": "%X of %Y items have usage that is more than 80% of the service limit.",
+        "SuppressionText" : "%X items have been excluded",
+        "DefaultDisplayColumns" : [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
         "Name" : "Amazon EBS Provisioned IOPS (SSD) Volume Attachment Configuration",
         "DefaultText": "%X of %Y EBS Provisioned IOPS volumes are attached to an EC2 instance that is not EBS-optimized.",
         "SuppressionText" : "%X items have been excluded",
